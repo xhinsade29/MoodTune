@@ -88,3 +88,27 @@ export const ProgressBar = styled.div`
     border-radius: 2px;
   }
 `;
+
+export const PlaylistContainer = styled.div`
+  margin-top: 2rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+`;
+
+export const PlaylistItem = styled.div`
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  &.active {
+    background: rgba(29, 185, 84, 0.3);
+  }
+`;
