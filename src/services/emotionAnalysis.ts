@@ -1,4 +1,4 @@
-import { OPENAI_API_KEY } from '../config';
+
 import { philippineEmotionKeywords } from '../data/philippineEmotionKeywords';
 
 interface EmotionAnalysisResult {
