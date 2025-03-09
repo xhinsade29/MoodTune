@@ -19,12 +19,41 @@ const PlaylistDisplay: React.FC<PlaylistDisplayProps> = ({
   recommendedTracks = []
 }) => {
   const [showRecommendations, setShowRecommendations] = useState(false);
+  const [recommendationError, setRecommendationError] = useState<string | null>(null);
+  const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false);
+
+  const handleGetRecommendations = async () => {
+    if (!onGetRecommendations || isLoadingRecommendations) return;
+
+    setRecommendationError(null);
+    setIsLoadingRecommendations(true);
+
+    try {
+      const seedTracks = tracks
+        .filter(track => track.preview_url)
+        .slice(0, 2)
+        .map(track => track.id);
+
+      if (seedTracks.length === 0) {
+        throw new Error('No suitable tracks found for recommendations');
+      }
+
+      await onGetRecommendations(seedTracks);
+      setShowRecommendations(true);
+    } catch (error) {
+      setRecommendationError(
+        error instanceof Error ? error.message : 'Failed to get recommendations'
+      );
+    } finally {
+      setIsLoadingRecommendations(false);
+    }
+  };
 
   if (isLoading) {
     return (
       <div className="playlist-display loading">
         <div className="spinner"></div>
-        <p>Finding the perfect tracks...</p>
+        <p>{showRecommendations ? 'Finding similar tracks...' : 'Loading tracks...'}</p>
       </div>
     );
   }
@@ -32,15 +61,6 @@ const PlaylistDisplay: React.FC<PlaylistDisplayProps> = ({
   if (!tracks.length) {
     return <div className="no-tracks">No tracks available</div>;
   }
-
-  const handleGetRecommendations = () => {
-    if (onGetRecommendations) {
-      const seedTracks = tracks
-        .slice(0, 2)
-        .map(track => track.id);
-      onGetRecommendations(seedTracks);
-    }
-  };
 
   return (
     <div className="playlist-display">
@@ -57,8 +77,9 @@ const PlaylistDisplay: React.FC<PlaylistDisplayProps> = ({
             <button 
               className={`tab-button ${showRecommendations ? 'active' : ''}`}
               onClick={() => setShowRecommendations(true)}
+              disabled={recommendedTracks.length === 0}
             >
-              Recommendations
+              Recommendations ({recommendedTracks.length})
             </button>
           </div>
         </div>
@@ -66,11 +87,21 @@ const PlaylistDisplay: React.FC<PlaylistDisplayProps> = ({
           <button 
             className="recommendation-button"
             onClick={handleGetRecommendations}
+            disabled={isLoadingRecommendations}
           >
-            Get Similar Tracks
+            {isLoadingRecommendations ? 'Finding Similar...' : 'Get Similar Tracks'}
           </button>
         )}
       </div>
+
+      {recommendationError && (
+        <div className="error-message" onClick={() => setRecommendationError(null)}>
+          {recommendationError}
+          <button className="retry-button" onClick={handleGetRecommendations}>
+            Try Again
+          </button>
+        </div>
+      )}
 
       <div className="tracks-list">
         {(showRecommendations ? recommendedTracks : tracks).map((track, index) => (

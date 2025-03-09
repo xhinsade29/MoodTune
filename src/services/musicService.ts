@@ -338,35 +338,83 @@ export const getPlaylistForEmotion = async (emotion: string): Promise<SpotifyTra
   }
 };
 
+// Add available Spotify genres for recommendations
+const availableGenres = [
+  'pop', 'rock', 'hip-hop', 'electronic', 'classical', 'jazz',
+  'ambient', 'indie', 'dance', 'alternative', 'metal', 'punk',
+  'soul', 'r-n-b', 'blues', 'chill'
+];
+
 export const getRecommendedTracks = async (
   seedTracks: string[],
   emotion: string
 ): Promise<SpotifyTrack[]> => {
   try {
     const token = await getSpotifyToken();
-    const genres = emotionToMusicMap[emotion.toLowerCase()] || ['pop'];
+    console.log('Getting recommendations with seeds:', seedTracks);
 
-    const response = await axios.get('https://api.spotify.com/v1/recommendations', {
+    const targetEnergy = getTargetEnergy(emotion);
+    const targetValence = getTargetValence(emotion);
+
+    // First try: Use seed tracks and genres
+    try {
+      const response = await axios.get('https://api.spotify.com/v1/recommendations', {
+        headers: { 'Authorization': `Bearer ${token}` },
+        params: {
+          seed_tracks: seedTracks.slice(0, 2).join(','),
+          seed_genres: availableGenres.slice(0, 3).join(','),
+          target_energy: targetEnergy,
+          target_valence: targetValence,
+          min_popularity: 50,
+          limit: 20,
+          market: 'US'
+        }
+      });
+
+      const recommendedTracks = response.data?.tracks || [];
+      const playableTracks = recommendedTracks
+        .filter((track: SpotifyTrack) => 
+          track?.preview_url && 
+          track?.name && 
+          track?.artists?.length > 0
+        )
+        .slice(0, 10);
+
+      if (playableTracks.length > 0) {
+        return playableTracks;
+      }
+    } catch (error) {
+      console.warn('Failed with seed tracks, falling back to genres only');
+    }
+
+    // Second try: Use only genres
+    const genreResponse = await axios.get('https://api.spotify.com/v1/recommendations', {
       headers: { 'Authorization': `Bearer ${token}` },
       params: {
-        seed_tracks: seedTracks.slice(0, 2).join(','), // Max 2 seed tracks
-        seed_genres: genres[0], // One genre
-        target_energy: emotion === 'calm' ? 0.3 : 0.5
+        seed_genres: availableGenres.slice(0, 5).join(','),
+        target_energy: targetEnergy,
+        target_valence: targetValence,
+        min_popularity: 50,
+        limit: 20,
+        market: 'US'
       }
     });
-    const recommendedTracks = response.data?.tracks || [];
-    const playableTracks = recommendedTracks
+
+    const genreTracks = genreResponse.data?.tracks || [];
+    const playableGenreTracks = genreTracks
       .filter((track: SpotifyTrack) => track?.preview_url)
       .slice(0, 10);
 
-    if (playableTracks.length > 0) {
-      console.log(`Found ${playableTracks.length} recommended tracks`);
-      return playableTracks;
+    if (playableGenreTracks.length > 0) {
+      return playableGenreTracks;
     }
 
     throw new Error('No playable recommended tracks found');
   } catch (error) {
-    console.error('Error getting recommendations:', error);
+    logApiError(error, 'Recommendation error');
+    if (axios.isAxiosError(error)) {
+      throw new Error(`Recommendation request failed: ${error.response?.data?.error?.message || error.message}`);
+    }
     throw error;
   }
 };

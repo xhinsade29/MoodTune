@@ -434,6 +434,8 @@ textarea:focus {
   min-height: 64px;
   background: rgba(255, 255, 255, 0.03);
   margin-bottom: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .track-thumbnail {
@@ -445,6 +447,9 @@ textarea:focus {
   gap: 0.75rem;
   flex: 1;
   min-width: 0;
+  padding: 1rem;
+  border-radius: var(--border-radius-sm);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .track-info {
@@ -452,6 +457,9 @@ textarea:focus {
   flex-direction: column;
   gap: 0.25rem;
   min-width: 0;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  padding-left: 1rem;
+  margin-left: 1rem;
 }
 
 /* =================================
@@ -544,12 +552,17 @@ textarea:focus {
   grid-template-columns: 1fr 2fr 1fr;
   align-items: center;
   gap: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius-md);
+  margin: 0 1rem;
 }
 
 .now-playing {
   display: flex;
   align-items: center;
   width: 100%;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  padding-right: 2rem;
 }
 
 .track-artwork {
@@ -594,6 +607,10 @@ textarea:focus {
   align-items: center;
   justify-content: center;
   gap: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  border-radius: var(--border-radius-md);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .control-button {
@@ -608,6 +625,7 @@ textarea:focus {
   align-items: center;
   justify-content: center;
   transition: all var(--transition-quick);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .control-button:hover {
@@ -640,6 +658,8 @@ textarea:focus {
   justify-content: flex-end;
   align-items: center;
   gap: 1rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  padding-left: 2rem;
 }
 
 .player-progress {
@@ -655,6 +675,8 @@ textarea:focus {
   cursor: pointer;
   position: relative;
   margin: 8px 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1px;
 }
 
 .progress-filled {
@@ -757,8 +779,10 @@ textarea:focus {
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem 2rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(0, 0, 0, 0.2);
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
 }
 
 .playlist-header h2 {
@@ -1153,6 +1177,10 @@ textarea:focus {
   display: flex;
   gap: 1rem;
   margin-left: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.25rem;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .tab-button {
@@ -1195,4 +1223,20 @@ textarea:focus {
 .add-to-playlist:hover {
   background: var(--primary-color-dark);
   transform: translateY(-1px);
+}
+
+.volume-control {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-md);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* Update playlist display styles */
+.playlist-display {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius-lg);
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.02);
+  margin-bottom: 1rem;
 }
