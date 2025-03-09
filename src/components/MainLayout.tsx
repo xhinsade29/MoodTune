@@ -1,25 +1,11 @@
-import styled from 'styled-components';
+import { useState } from 'react';
 import ChatBox from './ChatBox';
 import MusicPlayer from './MusicPlayer';
-import { useState } from 'react';
-
-const LayoutContainer = styled.div`
-  display: flex;
-  height: 100vh;
-  width: 100%;
-`;
-
-const LeftPanel = styled.div`
-  flex: 0 0 400px;
-  background-color: #f5f5f5;
-  border-right: 1px solid #e0e0e0;
-`;
-
-const RightPanel = styled.div`
-  flex: 1;
-  background-color: #121212;
-  color: white;
-`;
+import {
+  LayoutContainer,
+  LeftPanel,
+  RightPanel
+} from '../styles/MainLayoutStyles';
 
 const MainLayout = () => {
   const [currentEmotion, setCurrentEmotion] = useState<string>('');
