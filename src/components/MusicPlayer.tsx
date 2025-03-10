@@ -5,7 +5,7 @@ import { getTracksForEmotion, getPlaylistForEmotion, SpotifyTrack } from '../ser
 interface MusicPlayerProps {
   emotion: string;
   isLoading?: boolean;
-  savedTracks?: SpotifyTrack[];
+  initialTracks?: SpotifyTrack[];
 }
 
 const PlayerContainer = styled.div`
@@ -154,8 +154,8 @@ const TrackDuration = styled.span`
 `;
 
 
-const MusicPlayer: React.FC<MusicPlayerProps> = ({ emotion, savedTracks }) => {
-  const [tracks, setTracks] = useState<SpotifyTrack[]>([]);
+const MusicPlayer: React.FC<MusicPlayerProps> = ({ emotion, savedTracks, initialTracks = [] }) => {
+  const [tracks, setTracks] = useState<SpotifyTrack[]>(initialTracks);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [playbackError, setPlaybackError] = useState<string | null>(null);
@@ -164,7 +164,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ emotion, savedTracks }) => {
 
   useEffect(() => {
     const loadTracks = async () => {
-      if (!emotion) return;
+      if (!emotion || initialTracks.length > 0) return;
 
       setIsLoading(true);
       setPlaybackError(null);
@@ -182,7 +182,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ emotion, savedTracks }) => {
     };
 
     loadTracks();
-  }, [emotion]);
+  }, [emotion, initialTracks]);
 
   const currentTrack = tracks[currentTrackIndex];
 
