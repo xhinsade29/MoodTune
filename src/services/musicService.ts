@@ -114,7 +114,20 @@ export const getTracksForEmotion = async (emotion: string, confidence: number = 
       }
     });
 
-    const data: SpotifyRecommendationsResponse = await response.json();
+    if (!response.ok) {
+      throw new Error(`Spotify API error: ${response.status} ${response.statusText}`);
+    }
+
+    const text = await response.text();
+    if (!text) {
+      throw new Error('Empty response from Spotify API');
+    }
+
+    const data: SpotifyRecommendationsResponse = JSON.parse(text);
+    if (!data || !data.tracks) {
+      throw new Error('Invalid response format from Spotify API');
+    }
+
     return data.tracks.map(track => ({
       ...track,
       moodConfidence: confidence
