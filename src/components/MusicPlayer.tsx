@@ -4,6 +4,8 @@ import { getTracksForEmotion, getPlaylistForEmotion, SpotifyTrack } from '../ser
 
 interface MusicPlayerProps {
   emotion: string;
+  isLoading?: boolean;
+  savedTracks?: SpotifyTrack[];
 }
 
 const PlayerContainer = styled.div`
@@ -84,7 +86,7 @@ const ProgressBar = styled.div`
   border-radius: 2px;
   position: relative;
   cursor: pointer;
-  
+
   &::before {
     content: '';
     position: absolute;
@@ -95,24 +97,34 @@ const ProgressBar = styled.div`
   }
 `;
 
-const MusicPlayer: React.FC<MusicPlayerProps> = ({ emotion }) => {
+const SavePlaylistButton = styled.button`
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+`;
+
+
+const MusicPlayer: React.FC<MusicPlayerProps> = ({ emotion, savedTracks }) => {
   const [tracks, setTracks] = useState<SpotifyTrack[]>([]);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [playbackError, setPlaybackError] = useState<string | null>(null);
+  const [savedPlaylists, setSavedPlaylists] = useState<SpotifyTrack[][]>([]); //State to store saved playlists
+
 
   useEffect(() => {
     const loadTracks = async () => {
       if (!emotion) return;
-      
+
       setIsLoading(true);
       setPlaybackError(null);
-      
+
       try {
-        // You can use either method based on your preference
-        // const newTracks = await getTracksForEmotion(emotion);
         const newTracks = await getPlaylistForEmotion(emotion);
-        
         setTracks(newTracks);
         setCurrentTrackIndex(0);
       } catch (error) {
@@ -129,16 +141,22 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ emotion }) => {
   const currentTrack = tracks[currentTrackIndex];
 
   const handleNext = () => {
-    setCurrentTrackIndex((prevIndex) => 
+    setCurrentTrackIndex((prevIndex) =>
       prevIndex < tracks.length - 1 ? prevIndex + 1 : 0
     );
   };
 
   const handlePrevious = () => {
-    setCurrentTrackIndex((prevIndex) => 
+    setCurrentTrackIndex((prevIndex) =>
       prevIndex > 0 ? prevIndex - 1 : tracks.length - 1
     );
   };
+
+  const handleSavePlaylist = () => {
+    //Simple save - replace with actual backend call if needed
+    setSavedPlaylists([...savedPlaylists, tracks]);
+  };
+
 
   if (isLoading) {
     return <div>Finding the perfect tunes for your mood...</div>;
@@ -156,9 +174,9 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ emotion }) => {
     <PlayerContainer>
       <NowPlaying>
         <AlbumArt>
-          <img 
-            src={currentTrack.album?.images[0]?.url || '/default-album-art.png'} 
-            alt={currentTrack.name} 
+          <img
+            src={currentTrack.album?.images[0]?.url || '/default-album-art.png'}
+            alt={currentTrack.name}
             style={{ width: '100%', height: '100%', borderRadius: '8px' }}
           />
         </AlbumArt>
@@ -172,13 +190,14 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ emotion }) => {
           <ControlButton onClick={handleNext}>⏭</ControlButton>
         </Controls>
         <ProgressBar />
+        <SavePlaylistButton onClick={handleSavePlaylist}>Save Playlist</SavePlaylistButton>
       </NowPlaying>
       <div className="playlist">
         <h3>Your {emotion} Playlist</h3>
         <ul>
           {tracks.map((track, index) => (
-            <li 
-              key={track.id} 
+            <li
+              key={track.id}
               className={index === currentTrackIndex ? 'active' : ''}
               onClick={() => setCurrentTrackIndex(index)}
             >

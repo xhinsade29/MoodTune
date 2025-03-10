@@ -4,6 +4,8 @@ import EmotionInput from './components/EmotionInput';
 import MusicPlayer from './components/MusicPlayer';
 import MoodVisualizer from './components/MoodVisualizer';
 import Navigation from './components/Navigation';
+import SavedPlaylists from './components/SavedPlaylists';
+import { PlaylistProvider } from './context/PlaylistContext';
 import './App.css';
 
 const App: React.FC = () => {
@@ -57,8 +59,8 @@ const App: React.FC = () => {
         return (
           <div className="page-container">
             <h1>Your Playlist</h1>
-            <p>Here you can view and manage your saved playlists.</p>
-            {/* Playlist component will go here */}
+            <p>Your saved playlists from mood-based music generation.</p>
+            <SavedPlaylists />
           </div>
         );
       case 'recommended':
@@ -83,17 +85,19 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="app">
-      <Navigation currentPage={currentPage} onNavigate={handleNavigate} />
-      
-      <main className="content">
-        {renderContent()}
-      </main>
-      
-      <footer>
-        <p>MoodTune &copy; {new Date().getFullYear()} | Your personal mood-based music companion</p>
-      </footer>
-    </div>
+    <PlaylistProvider>
+      <div className="app">
+        <Navigation currentPage={currentPage} onNavigate={handleNavigate} />
+        
+        <main className="content">
+          {renderContent()}
+        </main>
+        
+        <footer>
+          <p>MoodTune &copy; {new Date().getFullYear()} | Your personal mood-based music companion</p>
+        </footer>
+      </div>
+    </PlaylistProvider>
   );
 };
 

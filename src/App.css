@@ -566,6 +566,202 @@ footer {
   color: var(--text-secondary);
 }
 
+/* Save Playlist Button & Dialog */
+.save-playlist-btn {
+  margin-top: 1rem;
+  background: var(--primary-color);
+  color: var(--black);
+  font-weight: bold;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 500px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.save-playlist-btn:hover {
+  background: var(--secondary-color);
+  transform: scale(1.05);
+}
+
+.save-dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.save-dialog-content {
+  background: var(--background-base);
+  padding: 2rem;
+  border-radius: 12px;
+  width: 400px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.save-dialog-content h3 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+
+.save-dialog-content input {
+  width: 100%;
+  padding: 12px;
+  background: var(--background-highlight);
+  border: none;
+  border-radius: 4px;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+}
+
+.save-dialog-content input:focus {
+  outline: 2px solid var(--primary-color);
+}
+
+.save-dialog-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.save-dialog-buttons button {
+  padding: 10px 20px;
+  border-radius: 500px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.save-dialog-buttons button:first-child {
+  background: var(--background-highlight);
+  color: var(--text-primary);
+}
+
+.save-dialog-buttons button:last-child {
+  background: var(--primary-color);
+  color: var(--black);
+}
+
+.save-dialog-buttons button:hover {
+  transform: scale(1.05);
+}
+
+/* Saved Playlists */
+.saved-playlists-container {
+  display: flex;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.saved-playlists-list {
+  flex: 0 0 40%;
+  background: var(--background-base);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.selected-playlist-player {
+  flex: 1;
+}
+
+.saved-playlist-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  margin-top: 1.5rem;
+}
+
+.saved-playlist-items li {
+  background: var(--background-highlight);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.saved-playlist-items li:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.saved-playlist-items li.active {
+  border-left: 4px solid var(--primary-color);
+  background: rgba(29, 185, 84, 0.1);
+}
+
+.playlist-info h3 {
+  margin: 0;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.playlist-details {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.mood-tag {
+  display: inline-block;
+  background: var(--primary-color);
+  color: var(--black);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 0.75rem;
+}
+
+.remove-playlist-btn {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--text-secondary);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.remove-playlist-btn:hover {
+  color: #ff4444;
+  border-color: #ff4444;
+}
+
+.no-playlists {
+  background: var(--background-highlight);
+  border-radius: 12px;
+  padding: 3rem;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.select-playlist-prompt {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  color: var(--text-secondary);
+  text-align: center;
+  background: var(--background-base);
+  border-radius: 12px;
+}
+
 /* Page Container Styles */
 .page-container {
   background: var(--background-base);
