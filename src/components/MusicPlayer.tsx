@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { getTracksForEmotion, getPlaylistForEmotion, SpotifyTrack } from '../services/musicService';
+import { SpotifyTrack, getPlaylistForEmotion } from '../services/musicService';
+import { usePlaylist } from '../context/PlaylistContext';
 
 interface MusicPlayerProps {
   emotion: string;
@@ -79,30 +80,14 @@ const ControlButton = styled.button`
   cursor: pointer;
 `;
 
-const ProgressBar = styled.div`
-  width: 100%;
-  height: 4px;
-  background-color: #282828;
-  border-radius: 2px;
-  position: relative;
-  cursor: pointer;
-
-  &::before {
-    content: '';
-    position: absolute;
-    width: 30%;
-    height: 100%;
-    background-color: #1ed760;
-    border-radius: 2px;
-  }
-`;
-
 const SavePlaylistButton = styled.button`
-  background-color: #4CAF50;
-  color: white;
-  padding: 10px 20px;
+  background-color: #1ed760;
   border: none;
-  border-radius: 5px;
+  border-radius: 20px;
+  color: black;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: bold;
   cursor: pointer;
   margin-top: 10px;
 `;
@@ -140,38 +125,13 @@ const SaveDialog: React.FC<SaveDialogProps> = ({ isOpen, onClose, onSave }) => {
   );
 };
 
-const MusicPlayer: React.FC<MusicPlayerProps> = ({ tracks, emotion }) => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const { saveCurrentPlaylist } = usePlaylist();
-
-  const handleSavePlaylist = (name: string) => {
-    saveCurrentPlaylist(name, tracks, emotion);
-    setIsDialogOpen(false);
-  };
-
-  return (
-    <div className="music-player">
-      {/* Existing player content */}
-      <SavePlaylistButton onClick={() => setIsDialogOpen(true)}>
-        Save Playlist
-      </SavePlaylistButton>
-      <SaveDialog
-        isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
-        onSave={handleSavePlaylist}
-      />
-    </div>
-  );
-};
-
-
-const MusicPlayer: React.FC<MusicPlayerProps> = ({ emotion, savedTracks }) => {
+const MusicPlayer: React.FC<MusicPlayerProps> = ({ emotion }) => {
   const [tracks, setTracks] = useState<SpotifyTrack[]>([]);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [playbackError, setPlaybackError] = useState<string | null>(null);
-  const [savedPlaylists, setSavedPlaylists] = useState<SpotifyTrack[][]>([]); //State to store saved playlists
-
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { saveCurrentPlaylist } = usePlaylist();
 
   useEffect(() => {
     const loadTracks = async () => {
@@ -209,11 +169,10 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ emotion, savedTracks }) => {
     );
   };
 
-  const handleSavePlaylist = () => {
-    //Simple save - replace with actual backend call if needed
-    setSavedPlaylists([...savedPlaylists, tracks]);
+  const handleSavePlaylist = (name: string) => {
+    saveCurrentPlaylist(name, tracks, emotion);
+    setIsDialogOpen(false);
   };
-
 
   if (isLoading) {
     return <div>Finding the perfect tunes for your mood...</div>;
@@ -246,8 +205,14 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ emotion, savedTracks }) => {
           <PlayButton>▶</PlayButton>
           <ControlButton onClick={handleNext}>⏭</ControlButton>
         </Controls>
-        <ProgressBar />
-        <SavePlaylistButton onClick={handleSavePlaylist}>Save Playlist</SavePlaylistButton>
+        <SavePlaylistButton onClick={() => setIsDialogOpen(true)}>
+          Save Playlist
+        </SavePlaylistButton>
+        <SaveDialog
+          isOpen={isDialogOpen}
+          onClose={() => setIsDialogOpen(false)}
+          onSave={handleSavePlaylist}
+        />
       </NowPlaying>
       <div className="playlist">
         <h3>Your {emotion} Playlist</h3>
