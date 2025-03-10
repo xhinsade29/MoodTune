@@ -1,6 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { getTracksForEmotion, getPlaylistForEmotion, SpotifyTrack } from '../services/musicService';
+import { getTracksForEmotion, SpotifyTrack } from '../services/musicService';
+import { usePlaylist } from '../context/PlaylistContext';
 
 interface MusicPlayerProps {
   emotion: string;
@@ -13,6 +15,7 @@ const PlayerContainer = styled.div`
   display: flex;
   flex-direction: column;
   padding: 20px;
+  background: #121212;
 `;
 
 const NowPlaying = styled.div`
@@ -21,6 +24,7 @@ const NowPlaying = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 20px;
 `;
 
 const AlbumArt = styled.div`
@@ -36,19 +40,23 @@ const AlbumArt = styled.div`
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 8px;
   }
 `;
 
 const SongInfo = styled.div`
   text-align: center;
   margin-bottom: 30px;
+  width: 100%;
+  max-width: 400px;
 `;
 
 const SongTitle = styled.h2`
   margin: 0;
   font-size: 28px;
   color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const ArtistName = styled.p`
@@ -62,7 +70,7 @@ const Controls = styled.div`
   align-items: center;
   justify-content: center;
   gap: 20px;
-  margin-bottom: 20px;
+  margin: 20px 0;
 `;
 
 const PlayButton = styled.button`
@@ -77,6 +85,11 @@ const PlayButton = styled.button`
   align-items: center;
   justify-content: center;
   font-size: 24px;
+  
+  &:hover {
+    transform: scale(1.05);
+    background-color: #1fdf64;
+  }
 `;
 
 const ControlButton = styled.button`
@@ -85,144 +98,126 @@ const ControlButton = styled.button`
   color: #b3b3b3;
   font-size: 20px;
   cursor: pointer;
+  padding: 10px;
+  border-radius: 50%;
+  
+  &:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+  }
+`;
+
+const SavePlaylistButton = styled.button`
+  background: #1ed760;
+  border: none;
+  border-radius: 20px;
+  color: black;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 20px;
+  
+  &:hover {
+    background: #1fdf64;
+    transform: scale(1.05);
+  }
 `;
 
 const ProgressBar = styled.div`
   width: 100%;
   height: 4px;
-  background-color: #282828;
+  background-color: #4f4f4f;
   border-radius: 2px;
+  margin: 20px 0;
   position: relative;
-  cursor: pointer;
-
-  &::before {
+  
+  &::after {
     content: '';
     position: absolute;
-    width: 30%;
+    left: 0;
+    top: 0;
     height: 100%;
+    width: 30%;
     background-color: #1ed760;
     border-radius: 2px;
   }
 `;
 
-const SavePlaylistButton = styled.button`
-  background-color: #4CAF50;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 10px;
-`;
-
-
-const MusicPlayer: React.FC<MusicPlayerProps> = ({ emotion, savedTracks }) => {
+const MusicPlayer: React.FC<MusicPlayerProps> = ({ emotion }) => {
   const [tracks, setTracks] = useState<SpotifyTrack[]>([]);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [playbackError, setPlaybackError] = useState<string | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const { savePlaylist } = usePlaylist();
 
   useEffect(() => {
     const generatePlaylist = async () => {
       if (!emotion) return;
       
       setIsLoading(true);
-      setPlaybackError(null);
-
       try {
-        // Generate emotion-specific tracks
-        const emotionPlaylists = {
-          happy: [
-            { id: '1', name: 'Walking on Sunshine', artists: [{ name: 'Katrina & The Waves' }], album: { images: [{ url: '/default-album-art.png' }] }},
-            { id: '2', name: 'Happy', artists: [{ name: 'Pharrell Williams' }], album: { images: [{ url: '/default-album-art.png' }] }},
-            { id: '3', name: 'Good Vibrations', artists: [{ name: 'The Beach Boys' }], album: { images: [{ url: '/default-album-art.png' }] }}
-          ],
-          sad: [
-            { id: '4', name: 'Someone Like You', artists: [{ name: 'Adele' }], album: { images: [{ url: '/default-album-art.png' }] }},
-            { id: '5', name: 'Yesterday', artists: [{ name: 'The Beatles' }], album: { images: [{ url: '/default-album-art.png' }] }},
-            { id: '6', name: 'All By Myself', artists: [{ name: 'Celine Dion' }], album: { images: [{ url: '/default-album-art.png' }] }}
-          ],
-          angry: [
-            { id: '7', name: 'Break Stuff', artists: [{ name: 'Limp Bizkit' }], album: { images: [{ url: '/default-album-art.png' }] }},
-            { id: '8', name: 'Bulls on Parade', artists: [{ name: 'Rage Against the Machine' }], album: { images: [{ url: '/default-album-art.png' }] }},
-            { id: '9', name: 'Given Up', artists: [{ name: 'Linkin Park' }], album: { images: [{ url: '/default-album-art.png' }] }}
-          ],
-          relaxed: [
-            { id: '10', name: 'Weightless', artists: [{ name: 'Marconi Union' }], album: { images: [{ url: '/default-album-art.png' }] }},
-            { id: '11', name: 'Claire de Lune', artists: [{ name: 'Claude Debussy' }], album: { images: [{ url: '/default-album-art.png' }] }},
-            { id: '12', name: 'Gymnopédie No.1', artists: [{ name: 'Erik Satie' }], album: { images: [{ url: '/default-album-art.png' }] }}
-          ]
-        };
-        
-        const mockTracks = emotionPlaylists[emotion.toLowerCase() as keyof typeof emotionPlaylists] || emotionPlaylists.happy;
-        
-        setTracks(mockTracks);
+        const newTracks = await getTracksForEmotion(emotion);
+        setTracks(newTracks);
         setCurrentTrackIndex(0);
       } catch (error) {
-        console.error('Error generating playlist:', error);
-        setPlaybackError('Failed to generate playlist. Please try again.');
+        console.error("Error generating playlist:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    if (emotion && !savedTracks) {
-      generatePlaylist();
-    } else if (savedTracks) {
-      setTracks(savedTracks);
-      setCurrentTrackIndex(0);
-    }
-  }, [emotion, savedTracks]);
-
-  const currentTrack = tracks[currentTrackIndex];
-
-  const handleNext = () => {
-    setCurrentTrackIndex((prevIndex) =>
-      prevIndex < tracks.length - 1 ? prevIndex + 1 : 0
-    );
-  };
+    generatePlaylist();
+  }, [emotion]);
 
   const handlePrevious = () => {
-    setCurrentTrackIndex((prevIndex) =>
-      prevIndex > 0 ? prevIndex - 1 : tracks.length - 1
-    );
+    setCurrentTrackIndex((prev) => (prev > 0 ? prev - 1 : tracks.length - 1));
+  };
+
+  const handleNext = () => {
+    setCurrentTrackIndex((prev) => (prev < tracks.length - 1 ? prev + 1 : 0));
+  };
+
+  const handlePlayPause = () => {
+    setIsPlaying(!isPlaying);
   };
 
   const handleSavePlaylist = () => {
-    // Implement save playlist functionality here
-    console.log('Saving playlist:', tracks);
+    if (tracks.length > 0) {
+      console.log("Saving playlist:", tracks);
+      savePlaylist(tracks, emotion);
+    }
   };
 
-  if (isLoading) {
-    return <div className="loading-message">Finding the perfect tunes for your mood...</div>;
-  }
+  const currentTrack = tracks[currentTrackIndex];
 
-  if (playbackError) {
-    return <div className="error-message">{playbackError}</div>;
+  if (isLoading) {
+    return <PlayerContainer>Loading...</PlayerContainer>;
   }
 
   if (!currentTrack) {
-    return <div className="empty-message">Share your mood to get music recommendations</div>;
+    return <PlayerContainer>No tracks available</PlayerContainer>;
   }
 
   return (
     <PlayerContainer>
       <NowPlaying>
         <AlbumArt>
-          <img
-            src={currentTrack.album?.images[0]?.url || '/default-album-art.png'}
-            alt={currentTrack.name}
-            style={{ width: '100%', height: '100%', borderRadius: '8px' }}
+          <img 
+            src={currentTrack.album.images[0]?.url || '/default-album-art.png'} 
+            alt={`${currentTrack.name} album art`}
           />
         </AlbumArt>
         <SongInfo>
           <SongTitle>{currentTrack.name}</SongTitle>
-          <ArtistName>{currentTrack.artists.map(artist => artist.name).join(', ')}</ArtistName>
+          <ArtistName>{currentTrack.artists[0].name}</ArtistName>
         </SongInfo>
         <Controls>
-          <ControlButton onClick={handlePrevious}>⏮</ControlButton>
-          <PlayButton>▶</PlayButton>
-          <ControlButton onClick={handleNext}>⏭</ControlButton>
+          <ControlButton onClick={handlePrevious}>⏮️</ControlButton>
+          <PlayButton onClick={handlePlayPause}>
+            {isPlaying ? '⏸️' : '▶️'}
+          </PlayButton>
+          <ControlButton onClick={handleNext}>⏭️</ControlButton>
         </Controls>
         <ProgressBar />
         <SavePlaylistButton onClick={handleSavePlaylist}>Save Playlist</SavePlaylistButton>
@@ -263,26 +258,22 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ emotion, savedTracks }) => {
                 cursor: 'pointer',
                 transition: 'all 0.3s ease',
                 display: 'flex',
-                justifyContent: 'space-between',
                 alignItems: 'center',
-                borderLeft: index === currentTrackIndex ? '4px solid #1DB954' : 'none',
-                transform: index === currentTrackIndex ? 'scale(1.02)' : 'scale(1)',
-                boxShadow: index === currentTrackIndex ? '0 4px 12px rgba(0,0,0,0.2)' : 'none'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = index === currentTrackIndex ? 'rgba(29, 185, 84, 0.3)' : 'rgba(255, 255, 255, 0.1)';
-                e.currentTarget.style.transform = 'scale(1.02)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = index === currentTrackIndex ? 'rgba(29, 185, 84, 0.2)' : 'rgba(255, 255, 255, 0.05)';
-                e.currentTarget.style.transform = index === currentTrackIndex ? 'scale(1.02)' : 'scale(1)';
+                gap: '12px',
+                borderLeft: index === currentTrackIndex ? '4px solid #1DB954' : 'none'
               }}
               onClick={() => setCurrentTrackIndex(index)}
             >
-              <div>
-                <span style={{ color: '#fff', marginRight: '8px' }}>{index + 1}.</span>
-                <span style={{ color: '#fff' }}>{track.name}</span>
-                <span style={{ color: '#b3b3b3', marginLeft: '8px' }}>- {track.artists[0].name}</span>
+              <div style={{ width: '24px', textAlign: 'right', color: '#b3b3b3' }}>
+                {index + 1}
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ color: '#fff', marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {track.name}
+                </div>
+                <div style={{ color: '#b3b3b3', fontSize: '14px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {track.artists[0].name}
+                </div>
               </div>
             </li>
           ))}
