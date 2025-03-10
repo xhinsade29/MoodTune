@@ -107,6 +107,52 @@ const SavePlaylistButton = styled.button`
   margin-top: 10px;
 `;
 
+const PlaylistContainer = styled.div`
+  margin-top: 20px;
+  overflow-y: auto; /* Add scrollbar if playlist is too long */
+  max-height: 200px; /* Set a maximum height for the playlist */
+`;
+
+const PlaylistTitle = styled.h3`
+  margin-bottom: 10px;
+`;
+
+const PlaylistItem = styled.li`
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  cursor: pointer;
+  border-bottom: 1px solid #333;
+  ${props => props.isActive && `
+    background-color: #4CAF50;
+    color: white;
+  `}
+`;
+
+const TrackNumber = styled.span`
+  width: 20px;
+  text-align: center;
+  margin-right: 10px;
+`;
+
+const TrackInfo = styled.div`
+  flex: 1;
+`;
+
+const TrackTitle = styled.span`
+  font-weight: bold;
+`;
+
+const TrackArtist = styled.span`
+  color: #b3b3b3;
+  font-size: 0.9em;
+`;
+
+const TrackDuration = styled.span`
+  margin-left: 10px;
+  color: #b3b3b3;
+`;
+
 
 const MusicPlayer: React.FC<MusicPlayerProps> = ({ emotion, savedTracks }) => {
   const [tracks, setTracks] = useState<SpotifyTrack[]>([]);
@@ -192,20 +238,21 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ emotion, savedTracks }) => {
         <ProgressBar />
         <SavePlaylistButton onClick={handleSavePlaylist}>Save Playlist</SavePlaylistButton>
       </NowPlaying>
-      <div className="playlist">
-        <h3>Your {emotion} Playlist</h3>
+      <PlaylistContainer>
+        <PlaylistTitle>Current Playlist for "{emotion}" Mood</PlaylistTitle>
         <ul>
           {tracks.map((track, index) => (
-            <li
-              key={track.id}
-              className={index === currentTrackIndex ? 'active' : ''}
-              onClick={() => setCurrentTrackIndex(index)}
-            >
-              {track.name} - {track.artists[0].name}
-            </li>
+            <PlaylistItem key={track.id} isActive={index === currentTrackIndex} onClick={() => setCurrentTrackIndex(index)}>
+              <TrackNumber>{index + 1}</TrackNumber>
+              <TrackInfo>
+                <TrackTitle>{track.name}</TrackTitle>
+                <TrackArtist>{track.artists[0].name}</TrackArtist>
+              </TrackInfo>
+              <TrackDuration>3:45</TrackDuration> {/* Placeholder duration */}
+            </PlaylistItem>
           ))}
         </ul>
-      </div>
+      </PlaylistContainer>
     </PlayerContainer>
   );
 };
