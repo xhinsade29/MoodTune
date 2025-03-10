@@ -219,16 +219,42 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ emotion, savedTracks }) => {
         <ProgressBar />
         <SavePlaylistButton onClick={handleSavePlaylist}>Save Playlist</SavePlaylistButton>
       </NowPlaying>
-      <div className="playlist">
-        <h3>Your {emotion} Playlist</h3>
-        <ul>
+      <div className="playlist" style={{ 
+        marginTop: '20px',
+        background: '#282828',
+        borderRadius: '8px',
+        padding: '20px',
+        width: '100%',
+        maxHeight: '300px',
+        overflowY: 'auto'
+      }}>
+        <h3 style={{ marginBottom: '15px', color: '#fff' }}>Your {emotion} Playlist</h3>
+        <ul style={{ 
+          listStyle: 'none',
+          padding: 0,
+          margin: 0
+        }}>
           {tracks.map((track, index) => (
             <li
               key={track.id}
-              className={index === currentTrackIndex ? 'active' : ''}
+              style={{
+                padding: '12px 15px',
+                margin: '8px 0',
+                background: index === currentTrackIndex ? 'rgba(29, 185, 84, 0.2)' : 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}
               onClick={() => setCurrentTrackIndex(index)}
             >
-              {track.name} - {track.artists[0].name}
+              <div>
+                <span style={{ color: '#fff', marginRight: '8px' }}>{index + 1}.</span>
+                <span style={{ color: '#fff' }}>{track.name}</span>
+                <span style={{ color: '#b3b3b3', marginLeft: '8px' }}>- {track.artists[0].name}</span>
+              </div>
             </li>
           ))}
         </ul>
