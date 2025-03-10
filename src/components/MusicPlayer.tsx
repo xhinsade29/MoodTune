@@ -107,6 +107,63 @@ const SavePlaylistButton = styled.button`
   margin-top: 10px;
 `;
 
+interface SaveDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (name: string) => void;
+}
+
+const SaveDialog: React.FC<SaveDialogProps> = ({ isOpen, onClose, onSave }) => {
+  const [playlistName, setPlaylistName] = useState('');
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="save-dialog">
+      <div className="save-dialog-content">
+        <h3>Save Playlist</h3>
+        <input
+          type="text"
+          placeholder="Enter playlist name"
+          value={playlistName}
+          onChange={(e) => setPlaylistName(e.target.value)}
+        />
+        <div className="save-dialog-buttons">
+          <button onClick={onClose}>Cancel</button>
+          <button onClick={() => {
+            onSave(playlistName);
+            setPlaylistName('');
+          }}>Save</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const MusicPlayer: React.FC<MusicPlayerProps> = ({ tracks, emotion }) => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { saveCurrentPlaylist } = usePlaylist();
+
+  const handleSavePlaylist = (name: string) => {
+    saveCurrentPlaylist(name, tracks, emotion);
+    setIsDialogOpen(false);
+  };
+
+  return (
+    <div className="music-player">
+      {/* Existing player content */}
+      <SavePlaylistButton onClick={() => setIsDialogOpen(true)}>
+        Save Playlist
+      </SavePlaylistButton>
+      <SaveDialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        onSave={handleSavePlaylist}
+      />
+    </div>
+  );
+};
+
 
 const MusicPlayer: React.FC<MusicPlayerProps> = ({ emotion, savedTracks }) => {
   const [tracks, setTracks] = useState<SpotifyTrack[]>([]);
