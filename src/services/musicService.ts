@@ -62,7 +62,11 @@ interface SpotifyPlaylistTracksResponse {
 // Get Spotify access token
 const getSpotifyToken = async (): Promise<string> => {
   try {
+    const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
+    const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
+    
     if (!SPOTIFY_CLIENT_ID || !SPOTIFY_CLIENT_SECRET) {
+      console.error('Missing Spotify credentials');
       throw new Error('Spotify credentials are not configured');
     }
 
@@ -134,7 +138,30 @@ export const getTracksForEmotion = async (emotion: string, confidence: number = 
     })) || [];
   } catch (error) {
     console.error("Error getting tracks:", error);
-    return [];
+    // Return fallback tracks when API fails
+    return [
+      {
+        id: "1",
+        name: "Happy Song",
+        artists: [{ name: "Artist 1" }],
+        album: { images: [{ url: "/default-album-art.png" }] },
+        moodConfidence: 1
+      },
+      {
+        id: "2",
+        name: "Joyful Tune",
+        artists: [{ name: "Artist 2" }],
+        album: { images: [{ url: "/default-album-art.png" }] },
+        moodConfidence: 1
+      },
+      {
+        id: "3",
+        name: "Upbeat Melody",
+        artists: [{ name: "Artist 3" }],
+        album: { images: [{ url: "/default-album-art.png" }] },
+        moodConfidence: 1
+      }
+    ];
   }
 };
 
