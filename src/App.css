@@ -11,6 +11,65 @@
   --shadow: rgba(0, 0, 0, 0.3);
 }
 
+/* Navigation Styles */
+.navigation {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  height: 64px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav-logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(to right, var(--primary-color), #4cff91);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links li button {
+  background: transparent;
+  color: var(--text-secondary);
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.5rem 0;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.nav-links li button:hover,
+.nav-links li.active button {
+  color: var(--text-primary);
+}
+
+.nav-links li.active button::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--primary-color);
+  border-radius: 3px;
+}
+
 body {
   font-family: 'Circular Std', 'Helvetica Neue', sans-serif;
   margin: 0;
@@ -454,6 +513,36 @@ footer {
   border-radius: 8px;
   background: var(--background-highlight);
   font-size: 0.9rem;
+}
+
+/* Page Container Styles */
+.page-container {
+  background: var(--background-base);
+  border-radius: 12px;
+  padding: 2.5rem;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  margin: 2rem auto;
+  max-width: 800px;
+  text-align: left;
+  animation: fade-in 0.4s ease-out;
+}
+
+.page-container h1 {
+  margin-top: 0;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+}
+
+.page-container p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .status-indicator {
