@@ -113,30 +113,54 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ emotion, savedTracks }) => {
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [playbackError, setPlaybackError] = useState<string | null>(null);
-  const [savedPlaylists, setSavedPlaylists] = useState<SpotifyTrack[][]>([]); //State to store saved playlists
-
 
   useEffect(() => {
-    const loadTracks = async () => {
+    const generatePlaylist = async () => {
       if (!emotion) return;
-
+      
       setIsLoading(true);
       setPlaybackError(null);
 
       try {
-        const newTracks = await getPlaylistForEmotion(emotion);
-        setTracks(newTracks);
+        // Mock playlist data since we don't have actual API
+        const mockTracks: SpotifyTrack[] = [
+          { 
+            id: '1', 
+            name: 'Happy Song', 
+            artists: [{ name: 'Artist 1' }], 
+            album: { images: [{ url: '/default-album-art.png' }] }
+          },
+          { 
+            id: '2', 
+            name: 'Joyful Tune', 
+            artists: [{ name: 'Artist 2' }],
+            album: { images: [{ url: '/default-album-art.png' }] }
+          },
+          { 
+            id: '3', 
+            name: 'Upbeat Melody', 
+            artists: [{ name: 'Artist 3' }],
+            album: { images: [{ url: '/default-album-art.png' }] }
+          }
+        ];
+        
+        setTracks(mockTracks);
         setCurrentTrackIndex(0);
       } catch (error) {
-        console.error("Error loading tracks:", error);
-        setPlaybackError("Couldn't load music for this mood. Please try again.");
+        console.error('Error generating playlist:', error);
+        setPlaybackError('Failed to generate playlist. Please try again.');
       } finally {
         setIsLoading(false);
       }
     };
 
-    loadTracks();
-  }, [emotion]);
+    if (emotion && !savedTracks) {
+      generatePlaylist();
+    } else if (savedTracks) {
+      setTracks(savedTracks);
+      setCurrentTrackIndex(0);
+    }
+  }, [emotion, savedTracks]);
 
   const currentTrack = tracks[currentTrackIndex];
 
@@ -158,30 +182,10 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ emotion, savedTracks }) => {
   };
 
 
-  const generatePlaylist = async () => {
-    try {
-      // Mock playlist generation - replace with actual API call later
-      const mockTracks = [
-        { id: '1', name: 'Happy Song', artist: 'Artist 1', duration: '3:30' },
-        { id: '2', name: 'Joyful Tune', artist: 'Artist 2', duration: '4:15' },
-        { id: '3', name: 'Upbeat Melody', artist: 'Artist 3', duration: '3:45' },
-      ];
-      setTracks(mockTracks);
-      setCurrentTrack(mockTracks[0]);
-    } catch (error) {
-      setPlaybackError('Failed to generate playlist. Please try again.');
-      console.error('Error generating playlist:', error);
-    }
+  const handleSavePlaylist = () => {
+    // Implement save playlist functionality here
+    console.log('Saving playlist:', tracks);
   };
-
-  useEffect(() => {
-    if (emotion && !savedTracks) {
-      generatePlaylist();
-    } else if (savedTracks) {
-      setTracks(savedTracks);
-      setCurrentTrack(savedTracks[0]);
-    }
-  }, [emotion, savedTracks]);
 
   if (isLoading) {
     return <div className="loading-message">Finding the perfect tunes for your mood...</div>;
