@@ -117,13 +117,13 @@ const PlaylistTitle = styled.h3`
   margin-bottom: 10px;
 `;
 
-const PlaylistItem = styled.li`
+const PlaylistItem = styled.li<{ $isActive?: boolean }>`
   display: flex;
   align-items: center;
   padding: 8px 0;
   cursor: pointer;
   border-bottom: 1px solid #333;
-  ${props => props.isActive && `
+  ${props => props.$isActive && `
     background-color: #4CAF50;
     color: white;
   `}
@@ -242,7 +242,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ emotion, savedTracks, initial
         <PlaylistTitle>Current Playlist for "{emotion}" Mood</PlaylistTitle>
         <ul>
           {tracks.map((track, index) => (
-            <PlaylistItem key={track.id} isActive={index === currentTrackIndex} onClick={() => setCurrentTrackIndex(index)}>
+            <PlaylistItem key={track.id} $isActive={index === currentTrackIndex} onClick={() => setCurrentTrackIndex(index)}>
               <TrackNumber>{index + 1}</TrackNumber>
               <TrackInfo>
                 <TrackTitle>{track.name}</TrackTitle>
