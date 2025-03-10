@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+<<<<<<< HEAD
 import { getTracksForEmotion, getPlaylistForEmotion, SpotifyTrack } from '../services/musicService';
 import {
   PlayerContainer,
@@ -12,29 +13,154 @@ import {
   ControlButton,
   ProgressBar
 } from '../styles/MusicPlayerStyles';
+=======
+import styled from 'styled-components';
+import { SpotifyTrack, getPlaylistForEmotion } from '../services/musicService';
+import { usePlaylist } from '../context/PlaylistContext';
+>>>>>>> 98902f7b6308506e73bb8ffb989920c960a3e089
 
 interface MusicPlayerProps {
   emotion: string;
+  isLoading?: boolean;
+  savedTracks?: SpotifyTrack[];
 }
 
+<<<<<<< HEAD
+=======
+const PlayerContainer = styled.div`
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+`;
+
+const NowPlaying = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
+
+const AlbumArt = styled.div`
+  width: 300px;
+  height: 300px;
+  background-color: #282828;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  border-radius: 8px;
+`;
+
+const SongInfo = styled.div`
+  text-align: center;
+  margin-bottom: 30px;
+`;
+
+const SongTitle = styled.h2`
+  margin: 0;
+  font-size: 28px;
+  color: #ffffff;
+`;
+
+const ArtistName = styled.p`
+  margin: 8px 0;
+  font-size: 16px;
+  color: #b3b3b3;
+`;
+
+const Controls = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 20px;
+`;
+
+const PlayButton = styled.button`
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: #1ed760;
+  border: none;
+  color: black;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+`;
+
+const ControlButton = styled.button`
+  background: none;
+  border: none;
+  color: #b3b3b3;
+  font-size: 20px;
+  cursor: pointer;
+`;
+
+const SavePlaylistButton = styled.button`
+  background-color: #1ed760;
+  border: none;
+  border-radius: 20px;
+  color: black;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+`;
+
+interface SaveDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (name: string) => void;
+}
+
+const SaveDialog: React.FC<SaveDialogProps> = ({ isOpen, onClose, onSave }) => {
+  const [playlistName, setPlaylistName] = useState('');
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="save-dialog">
+      <div className="save-dialog-content">
+        <h3>Save Playlist</h3>
+        <input
+          type="text"
+          placeholder="Enter playlist name"
+          value={playlistName}
+          onChange={(e) => setPlaylistName(e.target.value)}
+        />
+        <div className="save-dialog-buttons">
+          <button onClick={onClose}>Cancel</button>
+          <button onClick={() => {
+            onSave(playlistName);
+            setPlaylistName('');
+          }}>Save</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+>>>>>>> 98902f7b6308506e73bb8ffb989920c960a3e089
 const MusicPlayer: React.FC<MusicPlayerProps> = ({ emotion }) => {
   const [tracks, setTracks] = useState<SpotifyTrack[]>([]);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [playbackError, setPlaybackError] = useState<string | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { saveCurrentPlaylist } = usePlaylist();
 
   useEffect(() => {
     const loadTracks = async () => {
       if (!emotion) return;
-      
+
       setIsLoading(true);
       setPlaybackError(null);
-      
+
       try {
-        // You can use either method based on your preference
-        // const newTracks = await getTracksForEmotion(emotion);
         const newTracks = await getPlaylistForEmotion(emotion);
-        
         setTracks(newTracks);
         setCurrentTrackIndex(0);
       } catch (error) {
@@ -51,15 +177,20 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ emotion }) => {
   const currentTrack = tracks[currentTrackIndex];
 
   const handleNext = () => {
-    setCurrentTrackIndex((prevIndex) => 
+    setCurrentTrackIndex((prevIndex) =>
       prevIndex < tracks.length - 1 ? prevIndex + 1 : 0
     );
   };
 
   const handlePrevious = () => {
-    setCurrentTrackIndex((prevIndex) => 
+    setCurrentTrackIndex((prevIndex) =>
       prevIndex > 0 ? prevIndex - 1 : tracks.length - 1
     );
+  };
+
+  const handleSavePlaylist = (name: string) => {
+    saveCurrentPlaylist(name, tracks, emotion);
+    setIsDialogOpen(false);
   };
 
   if (isLoading) {
@@ -78,9 +209,9 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ emotion }) => {
     <PlayerContainer>
       <NowPlaying>
         <AlbumArt>
-          <img 
-            src={currentTrack.album?.images[0]?.url || '/default-album-art.png'} 
-            alt={currentTrack.name} 
+          <img
+            src={currentTrack.album?.images[0]?.url || '/default-album-art.png'}
+            alt={currentTrack.name}
             style={{ width: '100%', height: '100%', borderRadius: '8px' }}
           />
         </AlbumArt>
@@ -93,14 +224,21 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ emotion }) => {
           <PlayButton>▶</PlayButton>
           <ControlButton onClick={handleNext}>⏭</ControlButton>
         </Controls>
-        <ProgressBar />
+        <SavePlaylistButton onClick={() => setIsDialogOpen(true)}>
+          Save Playlist
+        </SavePlaylistButton>
+        <SaveDialog
+          isOpen={isDialogOpen}
+          onClose={() => setIsDialogOpen(false)}
+          onSave={handleSavePlaylist}
+        />
       </NowPlaying>
       <div className="playlist">
         <h3>Your {emotion} Playlist</h3>
         <ul>
           {tracks.map((track, index) => (
-            <li 
-              key={track.id} 
+            <li
+              key={track.id}
               className={index === currentTrackIndex ? 'active' : ''}
               onClick={() => setCurrentTrackIndex(index)}
             >

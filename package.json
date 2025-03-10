@@ -4,12 +4,16 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+<<<<<<< HEAD
     "preview": "vite preview",
     "check-deps": "node scripts/check-dependencies.js",
     "postinstall": "npm run check-deps"
+=======
+    "preview": "vite preview --host 0.0.0.0"
+>>>>>>> 98902f7b6308506e73bb8ffb989920c960a3e089
   },
   "dependencies": {
     "@types/styled-components": "^5.1.34",
