@@ -158,16 +158,41 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ emotion, savedTracks }) => {
   };
 
 
+  const generatePlaylist = async () => {
+    try {
+      // Mock playlist generation - replace with actual API call later
+      const mockTracks = [
+        { id: '1', name: 'Happy Song', artist: 'Artist 1', duration: '3:30' },
+        { id: '2', name: 'Joyful Tune', artist: 'Artist 2', duration: '4:15' },
+        { id: '3', name: 'Upbeat Melody', artist: 'Artist 3', duration: '3:45' },
+      ];
+      setTracks(mockTracks);
+      setCurrentTrack(mockTracks[0]);
+    } catch (error) {
+      setPlaybackError('Failed to generate playlist. Please try again.');
+      console.error('Error generating playlist:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (emotion && !savedTracks) {
+      generatePlaylist();
+    } else if (savedTracks) {
+      setTracks(savedTracks);
+      setCurrentTrack(savedTracks[0]);
+    }
+  }, [emotion, savedTracks]);
+
   if (isLoading) {
-    return <div>Finding the perfect tunes for your mood...</div>;
+    return <div className="loading-message">Finding the perfect tunes for your mood...</div>;
   }
 
   if (playbackError) {
-    return <div>{playbackError}</div>;
+    return <div className="error-message">{playbackError}</div>;
   }
 
   if (!currentTrack) {
-    return <div>Share your mood to get music recommendations</div>;
+    return <div className="empty-message">Share your mood to get music recommendations</div>;
   }
 
   return (
