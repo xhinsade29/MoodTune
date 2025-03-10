@@ -177,12 +177,6 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ emotion, savedTracks }) => {
   };
 
   const handleSavePlaylist = () => {
-    //Simple save - replace with actual backend call if needed
-    setSavedPlaylists([...savedPlaylists, tracks]);
-  };
-
-
-  const handleSavePlaylist = () => {
     // Implement save playlist functionality here
     console.log('Saving playlist:', tracks);
   };
