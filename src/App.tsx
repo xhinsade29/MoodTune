@@ -80,8 +80,6 @@ const App: React.FC = () => {
       <Navigation currentPage={currentPage} onNavigate={handleNavigate} />
       
       <header>
-        <h1>MoodTune</h1>
-        <p>Music that perfectly matches your mood</p>
       </header>
       
       <main className="content">
