@@ -30,6 +30,14 @@ const AlbumArt = styled.div`
   margin-bottom: 20px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.5);
   border-radius: 8px;
+  overflow: hidden;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+  }
 `;
 
 const SongInfo = styled.div`
@@ -222,31 +230,52 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ emotion, savedTracks }) => {
       <div className="playlist" style={{ 
         marginTop: '20px',
         background: '#282828',
-        borderRadius: '8px',
-        padding: '20px',
+        borderRadius: '12px',
+        padding: '24px',
         width: '100%',
-        maxHeight: '300px',
-        overflowY: 'auto'
+        maxHeight: '400px',
+        overflowY: 'auto',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
       }}>
-        <h3 style={{ marginBottom: '15px', color: '#fff' }}>Your {emotion} Playlist</h3>
+        <h3 style={{ 
+          marginBottom: '20px', 
+          color: '#fff',
+          fontSize: '24px',
+          fontWeight: 'bold',
+          borderBottom: '2px solid rgba(255,255,255,0.1)',
+          paddingBottom: '12px'
+        }}>Your {emotion} Playlist</h3>
         <ul style={{ 
           listStyle: 'none',
           padding: 0,
-          margin: 0
+          margin: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px'
         }}>
           {tracks.map((track, index) => (
             <li
               key={track.id}
               style={{
-                padding: '12px 15px',
-                margin: '8px 0',
+                padding: '16px 20px',
                 background: index === currentTrackIndex ? 'rgba(29, 185, 84, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-                borderRadius: '6px',
+                borderRadius: '8px',
                 cursor: 'pointer',
-                transition: 'all 0.2s ease',
+                transition: 'all 0.3s ease',
                 display: 'flex',
                 justifyContent: 'space-between',
-                alignItems: 'center'
+                alignItems: 'center',
+                borderLeft: index === currentTrackIndex ? '4px solid #1DB954' : 'none',
+                transform: index === currentTrackIndex ? 'scale(1.02)' : 'scale(1)',
+                boxShadow: index === currentTrackIndex ? '0 4px 12px rgba(0,0,0,0.2)' : 'none'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = index === currentTrackIndex ? 'rgba(29, 185, 84, 0.3)' : 'rgba(255, 255, 255, 0.1)';
+                e.currentTarget.style.transform = 'scale(1.02)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = index === currentTrackIndex ? 'rgba(29, 185, 84, 0.2)' : 'rgba(255, 255, 255, 0.05)';
+                e.currentTarget.style.transform = index === currentTrackIndex ? 'scale(1.02)' : 'scale(1)';
               }}
               onClick={() => setCurrentTrackIndex(index)}
             >
