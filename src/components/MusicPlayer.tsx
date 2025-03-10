@@ -122,27 +122,31 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ emotion, savedTracks }) => {
       setPlaybackError(null);
 
       try {
-        // Mock playlist data since we don't have actual API
-        const mockTracks: SpotifyTrack[] = [
-          { 
-            id: '1', 
-            name: 'Happy Song', 
-            artists: [{ name: 'Artist 1' }], 
-            album: { images: [{ url: '/default-album-art.png' }] }
-          },
-          { 
-            id: '2', 
-            name: 'Joyful Tune', 
-            artists: [{ name: 'Artist 2' }],
-            album: { images: [{ url: '/default-album-art.png' }] }
-          },
-          { 
-            id: '3', 
-            name: 'Upbeat Melody', 
-            artists: [{ name: 'Artist 3' }],
-            album: { images: [{ url: '/default-album-art.png' }] }
-          }
-        ];
+        // Generate emotion-specific tracks
+        const emotionPlaylists = {
+          happy: [
+            { id: '1', name: 'Walking on Sunshine', artists: [{ name: 'Katrina & The Waves' }], album: { images: [{ url: '/default-album-art.png' }] }},
+            { id: '2', name: 'Happy', artists: [{ name: 'Pharrell Williams' }], album: { images: [{ url: '/default-album-art.png' }] }},
+            { id: '3', name: 'Good Vibrations', artists: [{ name: 'The Beach Boys' }], album: { images: [{ url: '/default-album-art.png' }] }}
+          ],
+          sad: [
+            { id: '4', name: 'Someone Like You', artists: [{ name: 'Adele' }], album: { images: [{ url: '/default-album-art.png' }] }},
+            { id: '5', name: 'Yesterday', artists: [{ name: 'The Beatles' }], album: { images: [{ url: '/default-album-art.png' }] }},
+            { id: '6', name: 'All By Myself', artists: [{ name: 'Celine Dion' }], album: { images: [{ url: '/default-album-art.png' }] }}
+          ],
+          angry: [
+            { id: '7', name: 'Break Stuff', artists: [{ name: 'Limp Bizkit' }], album: { images: [{ url: '/default-album-art.png' }] }},
+            { id: '8', name: 'Bulls on Parade', artists: [{ name: 'Rage Against the Machine' }], album: { images: [{ url: '/default-album-art.png' }] }},
+            { id: '9', name: 'Given Up', artists: [{ name: 'Linkin Park' }], album: { images: [{ url: '/default-album-art.png' }] }}
+          ],
+          relaxed: [
+            { id: '10', name: 'Weightless', artists: [{ name: 'Marconi Union' }], album: { images: [{ url: '/default-album-art.png' }] }},
+            { id: '11', name: 'Claire de Lune', artists: [{ name: 'Claude Debussy' }], album: { images: [{ url: '/default-album-art.png' }] }},
+            { id: '12', name: 'Gymnopédie No.1', artists: [{ name: 'Erik Satie' }], album: { images: [{ url: '/default-album-art.png' }] }}
+          ]
+        };
+        
+        const mockTracks = emotionPlaylists[emotion.toLowerCase() as keyof typeof emotionPlaylists] || emotionPlaylists.happy;
         
         setTracks(mockTracks);
         setCurrentTrackIndex(0);
