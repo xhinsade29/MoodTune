@@ -28,23 +28,30 @@ const App: React.FC = () => {
     switch (currentPage) {
       case 'home':
         return (
-          <>
-            <EmotionInput onEmotionDetected={handleEmotionDetected} />
-            
-            {detectedEmotion && (
-              <>
+          <div className="two-panel-layout">
+            <div className="left-panel">
+              <EmotionInput onEmotionDetected={handleEmotionDetected} />
+              {detectedEmotion && (
                 <MoodVisualizer emotion={detectedEmotion} isLoading={isLoading} />
+              )}
+              {!detectedEmotion && (
+                <div className="welcome-message">
+                  <h2>How are you feeling today?</h2>
+                  <p>Share your thoughts above and we'll find the perfect soundtrack for your mood.</p>
+                </div>
+              )}
+            </div>
+            <div className="right-panel">
+              {detectedEmotion ? (
                 <MusicPlayer emotion={detectedEmotion} isLoading={isLoading} />
-              </>
-            )}
-            
-            {!detectedEmotion && (
-              <div className="welcome-message">
-                <h2>How are you feeling today?</h2>
-                <p>Share your thoughts above and we'll find the perfect soundtrack for your mood.</p>
-              </div>
-            )}
-          </>
+              ) : (
+                <div className="empty-player-message">
+                  <h2>Your music will appear here</h2>
+                  <p>Tell us how you're feeling to get personalized music recommendations.</p>
+                </div>
+              )}
+            </div>
+          </div>
         );
       case 'your-playlist':
         return (
@@ -78,9 +85,6 @@ const App: React.FC = () => {
   return (
     <div className="app">
       <Navigation currentPage={currentPage} onNavigate={handleNavigate} />
-      
-      <header>
-      </header>
       
       <main className="content">
         {renderContent()}
