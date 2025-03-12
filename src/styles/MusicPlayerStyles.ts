@@ -61,7 +61,14 @@ export const PlayButton = styled.button`
   align-items: center;
   justify-content: center;
   font-size: 24px;
+  transition: background-color 0.3s, transform 0.2s;
+
+  &:hover {
+    background-color: #1db954;
+    transform: scale(1.1);
+  }
 `;
+
 
 export const ControlButton = styled.button`
   background: none;
@@ -69,7 +76,13 @@ export const ControlButton = styled.button`
   color: #b3b3b3;
   font-size: 20px;
   cursor: pointer;
+  transition: color 0.3s;
+
+  &:hover {
+    color: #ffffff;
+  }
 `;
+
 
 export const ProgressBar = styled.div`
   width: 100%;
@@ -89,7 +102,20 @@ export const ProgressBar = styled.div`
   }
 `;
 
+export const SavePlaylistButton = styled.button`
+  background-color: #1ed760;
+  border: none;
+  border-radius: 20px;
+  color: black;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+`;
+
 export const PlaylistContainer = styled.div`
+
   margin-top: 2rem;
   padding: 1rem;
   background: rgba(255, 255, 255, 0.05);
@@ -105,10 +131,10 @@ export const PlaylistItem = styled.div`
   transition: background-color 0.2s;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.1);
   }
 
   &.active {
-    background: rgba(29, 185, 84, 0.3);
+    background: rgba(29, 185, 84, 0.5);
   }
 `;

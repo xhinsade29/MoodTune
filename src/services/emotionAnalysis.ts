@@ -1,9 +1,24 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { philippineEmotionKeywords } from '../data/philippineEmotionKeywords';
 
 interface EmotionAnalysisResult {
   emotion: string;
   confidence: number;
 }
+
+const defaultEmotions = [
+  'happy',
+  'sad',
+  'energetic',
+  'calm',
+  'angry',
+  'anxious',
+  'excited',
+  'melancholic',
+  'nostalgic',
+  'relaxed'
+];
 
 const emotionKeywords = {
   happy: ['happy', 'joy', 'delighted', 'cheerful', 'wonderful', 'blessed', 'great', 'fantastic', 'thrilled', ...philippineEmotionKeywords.happy],
@@ -20,47 +35,32 @@ const emotionKeywords = {
 
 export const analyzeEmotion = async (text: string): Promise<EmotionAnalysisResult> => {
   try {
-    console.log('Analyzing text:', text);
-    
     if (!text.trim()) {
-      console.warn('Empty text provided');
-      return { emotion: 'neutral', confidence: 0.5 };
+      throw new Error('No text provided for emotion analysis');
     }
 
     const lowercaseText = text.toLowerCase();
-    let maxScore = 0;
-    let detectedEmotion = 'neutral';
+    const emotionScores = Object.entries(emotionKeywords).map(([emotion, keywords]) => ({
+      emotion,
+      score: keywords.reduce((score, keyword) => 
+        score + (lowercaseText.includes(keyword) ? 1 : 0), 0) / keywords.length
+    }));
 
-    // Calculate emotion scores
-    const emotionScores = Object.entries(emotionKeywords).map(([emotion, keywords]) => {
-      const score = keywords.reduce((total, keyword) => {
-        // Check for exact matches and word boundaries
-        const regex = new RegExp(`\\b${keyword}\\b`, 'i');
-        return total + (regex.test(lowercaseText) ? 1 : 0);
-      }, 0) / keywords.length;
-
-      console.log(`Score for ${emotion}:`, score);
-      
-      if (score > maxScore) {
-        maxScore = score;
-        detectedEmotion = emotion;
-      }
-      
-      return { emotion, score };
-    });
-
-    console.log('Emotion analysis results:', {
-      detected: detectedEmotion,
-      confidence: maxScore,
-      allScores: emotionScores
-    });
+    const strongestEmotion = emotionScores.reduce((max, current) => 
+      current.score > max.score ? current : max,
+      { emotion: 'neutral', score: 0 }
+    );
 
     return {
-      emotion: maxScore > 0 ? detectedEmotion : 'neutral',
-      confidence: maxScore || 0.5
+      emotion: strongestEmotion.score > 0 ? strongestEmotion.emotion : 'neutral',
+      confidence: strongestEmotion.score || 0.5
     };
   } catch (error) {
-    console.error('Error in emotion analysis:', error);
-    return { emotion: 'neutral', confidence: 0.5 };
+    console.error('Error analyzing emotion:', error);
+    // Return a default emotion instead of throwing
+    return {
+      emotion: 'neutral',
+      confidence: 0.5
+    };
   }
 };

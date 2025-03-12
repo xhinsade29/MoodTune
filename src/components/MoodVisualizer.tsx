@@ -2,6 +2,8 @@ import React from 'react';
 
 interface MoodVisualizerProps {
   emotion: string;
+  isLoading: boolean;
+
 }
 
 interface EmotionStyle {
@@ -9,7 +11,8 @@ interface EmotionStyle {
   animation: string;
 }
 
-const MoodVisualizer: React.FC<MoodVisualizerProps> = ({ emotion }) => {
+const MoodVisualizer: React.FC<MoodVisualizerProps> = ({ emotion, isLoading }) => {
+
   // Map emotions to colors and animations
   const emotionStyles: Record<string, EmotionStyle> = {
     happy: { background: 'linear-gradient(120deg, #f6d365 0%, #fda085 100%)', animation: 'pulse' },
@@ -29,6 +32,7 @@ const MoodVisualizer: React.FC<MoodVisualizerProps> = ({ emotion }) => {
 
   return (
     <div style={{ background: style.background }}>
+      {isLoading && <div className="loading-message">Loading...</div>}
       Current Mood: {emotion ? emotion.charAt(0).toUpperCase() + emotion.slice(1) : 'No mood selected'}
     </div>
   );

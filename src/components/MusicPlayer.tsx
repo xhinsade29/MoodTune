@@ -1,23 +1,7 @@
 import React, { useState, useEffect } from 'react';
-<<<<<<< HEAD
-import { getTracksForEmotion, getPlaylistForEmotion, SpotifyTrack } from '../services/musicService';
-import {
-  PlayerContainer,
-  NowPlaying,
-  AlbumArt,
-  SongInfo,
-  SongTitle,
-  ArtistName,
-  Controls,
-  PlayButton,
-  ControlButton,
-  ProgressBar
-} from '../styles/MusicPlayerStyles';
-=======
 import styled from 'styled-components';
 import { SpotifyTrack, getPlaylistForEmotion } from '../services/musicService';
 import { usePlaylist } from '../context/PlaylistContext';
->>>>>>> 98902f7b6308506e73bb8ffb989920c960a3e089
 
 interface MusicPlayerProps {
   emotion: string;
@@ -25,8 +9,6 @@ interface MusicPlayerProps {
   savedTracks?: SpotifyTrack[];
 }
 
-<<<<<<< HEAD
-=======
 const PlayerContainer = styled.div`
   height: 100%;
   display: flex;
@@ -143,7 +125,6 @@ const SaveDialog: React.FC<SaveDialogProps> = ({ isOpen, onClose, onSave }) => {
   );
 };
 
->>>>>>> 98902f7b6308506e73bb8ffb989920c960a3e089
 const MusicPlayer: React.FC<MusicPlayerProps> = ({ emotion }) => {
   const [tracks, setTracks] = useState<SpotifyTrack[]>([]);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
